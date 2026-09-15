@@ -1,0 +1,12 @@
+@echo off
+title Управление системой с помощью клавиш на клавиатуре WASD
+
+::Выбрать правильный номер порта контроллера
+set "COMPORT=COM4"
+
+::Системные сообщения и код захвата клавиатуры и передачи команд на порт
+echo Подключение к %COMPORT%...
+echo Используйте W, A, S, D для управления. Для выхода нажмите ESC.
+echo.
+powershell -Command "$port = New-Object System.IO.Ports.SerialPort %COMPORT%, 9600, None, 8, one; try { $port.Open() } catch { Write-Host 'Ошибка открытия порта!'; exit }; while ($true) { if ([System.Console]::KeyAvailable) { $key = [System.Console]::ReadKey($true); if ($key.Key -eq 'Escape') { break }; $char = $key.KeyChar.ToString().ToLower(); if ($char -match '[wasd]') { $port.Write($char); Write-Host \"Отправлено: $char\" } }; Start-Sleep -Milliseconds 20 }; $port.Close();"
+pause
